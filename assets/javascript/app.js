@@ -12,7 +12,6 @@
 var trainData = new Firebase("https://sac-train-scheduler.firebaseio.com/");
 
 // 2. At the initial load, get a snapshot of the current data.
-/*
 trainData.on("value", function(snapshot) {
 
   // If there are trains scheduled, then display each one in the schedule
@@ -50,7 +49,6 @@ trainData.on("value", function(snapshot) {
     console.log("The read failed: " + errorObject.code);
 
 });
-*/
 
 // 3. Button for adding Trains
 $("#addTrainBtn").on("click", function(){
@@ -70,7 +68,7 @@ $("#addTrainBtn").on("click", function(){
 	};
 
 	// Uploads train data to the database
-	employeeData.push(newTrain, function(errorObject) {
+	trainData.push(newTrain, function(errorObject) {
 
       if (errorObject) {
         console.log('Push failed');
@@ -95,20 +93,16 @@ $("#addTrainBtn").on("click", function(){
 	return false;
 });
 
-trainData.on("child_added", function(childSnapshot, prevChildKey){
-	console.log("child added: key="+childSnapshot.key()+",val="+childSnapshot.val());
-});
-
 // 3. Create Firebase event for adding a train to the database and a row in the html when a user adds an entry
-trainData.once("value", function(snapshot) {
+trainData.on("child_added", function(childSnapshot, prevChildKey){
 
 	console.log("initial data loaded!");
 
 	// Store everything into a variable.
-	var trainName = snapshot.val().trainName;
-	var destination = snapshot.val().destination;
-	var trainTime = snapshot.val().trainTime;
-	var frequency = snapshot.val().frequency;
+	var trainName = childSnapshot.val().trainName;
+	var destination = childSnapshot.val().destination;
+	var trainTime = childSnapshot.val().trainTime;
+	var frequency = childSnapshot.val().frequency;
 
 	// Train Info
 	console.log(trainName);
@@ -134,7 +128,7 @@ trainData.once("value", function(snapshot) {
 	console.log(nextArrival);
 
 	// Calculate the minutes away
-	var minutesAway = moment().subtract(moment.unix(nextArrival, 'HH:mm'), "minutes");
+	var minutesAway = moment().diff(moment.unix(nextArrival, 'HH:mm'), "minutes");
 	console.log(nextArrival);
 
 	// Add each train's data into the table
