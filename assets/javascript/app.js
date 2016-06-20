@@ -102,7 +102,7 @@ trainData.on("child_added", function(childSnapshot, prevChildKey){
 	var trainName = childSnapshot.val().trainName;
 	var destination = childSnapshot.val().destination;
 	var trainTime = childSnapshot.val().trainTime;
-	var frequency = childSnapshot.val().frequency;
+	var frequency = parseInt(childSnapshot.val().frequency);
 
 	// Train Info
 	console.log(trainName);
@@ -121,42 +121,34 @@ trainData.on("child_added", function(childSnapshot, prevChildKey){
 //	var nextArrival = moment().subtract(moment.unix(trainTime, 'HH:mm'), "minutes");
 	// Ignore correct usage of moment.js for now
 
-	var currentTime = moment.unix();
-	var startTime = moment.unix(trainTime);
-	var remainingMinutes = (currentTime - startTime) % frequency;
-	var nextArrival = currentTime + remainingMinutes;
-	console.log(nextArrival);
+	var currentTime = Date();
+	var startTime = Date(trainTime);
+	var interval = frequency;
+	var remainingMinutes = (timeInMinutes(currentTime) - timeInMinutes(startTime)) % interval;
+/*?*/	var nextArrival = currentTime + (interval - remainingMinutes);
+	console.log("currentTime=" + moment(currentTime).format("hh:mm A"));
+	console.log("startTime=" + moment(startTime).format("hh:mm A"));
+	console.log("nextArrival=" + moment(nextArrival).format("hh:mm A"));
+	console.log("interval=" + moment(interval).format("hh:mm A"));
 
 	// Calculate the minutes away
-	var minutesAway = moment().diff(moment.unix(nextArrival, 'HH:mm'), "minutes");
-	console.log(nextArrival);
+	var minutesAway = nextArrival - currentTime;
+	console.log("minutesAway=" + moment(minutesAway).format("hh:mm A"));
 
 	// Add each train's data into the table
 	$("#trainSchedule > tbody").append("<tr><td>" + trainName + 
 										"</td><td>" + destination + 
 										"</td><td>" + frequency + 
-										"</td><td>" + nextArrival + 
-										"</td><td>" + minutesAway + 
+										"</td><td>" + moment(nextArrival).format("hh:mm A") + 
+										"</td><td>" + moment(minutesAway).format("mm") + 
 										"</td></tr>");
-/*
-	var tableRow = $("<tr>");
-	var tableData1 = $("<td>");
-	tableData1.html(trainName);
-	var tableData2 = $("<td>");
-	tableData2.html(destination);
-	var tableData3 = $("<td>");
-	tableData3.html(trainTime);
-	var tableData4 = $("<td>");
-	tableData4.html(frequency);
-	tableRow.append(tableData1);
-	tableRow.append(tableData2);
-	tableRow.append(tableData3);
-	tableRow.append(tableData4);
-	$("#trainSchedule > tbody").append(tableRow);
-*/
 });
 
+function timeInMinutes(time) {
 
+  return time.minutes() + time.hours() * 60;
+
+}
 // Example Time Math
 // -----------------------------------------------------------------------------
 // Assume Employee start date of January 1, 2015
