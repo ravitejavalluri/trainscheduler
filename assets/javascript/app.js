@@ -1,102 +1,18 @@
-var TrainScheduler = {
+// Steps to complete:
+/*
+1. Create Firebase link
+2. Get a snapshot of the current data and display the schedule
+3. Create button for adding new trains - then update the html + update the database
+4. Create a way to retrieve trains from the train database.
+5. Create a way to calculate the minutes away. Using difference between next arrival and current time. Then use moment.js formatting to set difference in months.
 
-  // Initial Values for a new train
-  trainName: "",
-  destination: "",
+*/
 
-  firstTrainTime: "00:00",
-  frequency: "00:00",
-
-  // counter for views
-  viewCounter: 0,
-
-  displaySchedule: function(train, id){
-    // Create a div for each data value for the current train and append it to the schedule div
-    // Append the div in the appropriate column div, i.e. id="trainNameCol"
-    // Ex: <h6 id="trainName-1">Santa Express</h6>
-
-    // Train Name
-    var trainNameDiv = $("<h6>");
-    
-    trainNameDiv.addClass("#trainName-" + id);
-    trainNameDiv.append(train.val().trainName);
-
-    $("#trainNameCol").append(trainNameDiv);
-
-    // Train Destination
-    var trainDestDiv = $("<h6>");
-    
-    trainDestDiv.addClass("#destination-" + id);
-    trainDestDiv.append(train.val().destination);
-
-    $("#destinationCol").append(trainDestDiv);
-
-    // Train Frequency
-    var trainFreqDiv = $("<h6>");
-    
-    trainFreqDiv.addClass("#frequency-" + id);
-    trainFreqDiv.append(train.val().frequency);
-
-    $("#frequencyCol").append(trainFreqDiv);
-
-    // Next Arrival
-    var nextArrivalDiv = $("<h6>");
-    
-    nextArrivalDiv.addClass("#nextArrival-" + id);
-    nextArrivalDiv.append(train.val().nextArrival);
-
-    $("#nextArrivalCol").append(nextArrivalDiv);
-
-    // Minutes Away
-    var minutesAwayDiv = $("<h6>");
-    
-    minutesAwayDiv.addClass("#nextArrival-" + id);
-    minutesAwayDiv.append(train.val().nextArrival + train.val().frequency);
-
-    $("#nextArrivalCol").append(minutesAwayDiv);
-  },
-
-  addTrain: function() {
-
-    // Get the input values
-    var trainName = $('#trainName').val().trim();
-    var destination = $('#destination').val().trim();
-    var trainTime = $('#trainTime').val().trim();
-    var frequency = $('#frequency').val().trim();
-
-    // Log the Train data
-    console.log(trainName);
-    console.log(destination);
-    console.log(trainTime);
-    console.log(frequency);
-
-    // Save the new price in Firebase
-    trainData.set({
-      trainName: trainName,
-      destination: destination,
-      trainTime: trainTime,
-      frequency: frequency
-    }, function(errorObject) {
-      if (errorObject) {
-        console.log('Synchronization failed');
-      } else {
-        console.log('Synchronization succeeded');
-      }
-    });
-
-    // Change the HTML to reflect the new train data
-//  $("#trainName").html(bidderName);
-//  $("#highestPrice").html("$" +  bidderPrice);
-  },
-};
-
-// ------------  FUNCTIONS  -------------------------------------------    
-
-// Link to Firebase
+// 1. Link to Firebase
 var trainData = new Firebase("https://sac-train-scheduler.firebaseio.com/");
-var trainCount = 0;
 
-// At the initial load, get a snapshot of the current data.
+// 2. At the initial load, get a snapshot of the current data.
+/*
 trainData.on("value", function(snapshot) {
 
   // If there are trains scheduled, then display each one in the schedule
@@ -104,32 +20,23 @@ trainData.on("value", function(snapshot) {
 
     snapshot.forEach(function(data) {
 
-      TrainScheduler.displaySchedule(data, trainCount++);
-
-/* Replace this with one call to displaySchedule with the data for
- * the current train retrieved from the database.  Pass the count
- * along so displaySchedule can create a unique id for the html where
- * the data will be displayed.
-
-    // Set the initial variables for highBidder equal to the stored values.
-    trainName = snapshot.val().trainName;
-    destination = snapshot.val().destination;
-    firstTrainTime = "00:00" // for now. later use moments.js to format for military time
-    frequency = "00:00" // use moments.js
-
-    // Change the HTML to reflect the initial value
-    $('#trainName').html(snapshot.val().trainName);
-    $('#destination').html(snapshot.val().destination);
-    $('#firstTrainTime').html(snapshot.val().firstTrainTime);
-    $('#frequency').html(snapshot.val().frequency);
-
-    // Print the initial data to the console.
-    console.log(snapshot.val().trainName);
-    console.log(snapshot.val().destination);
-    console.log(snapshot.val().firstTrainTime);
-    console.log(snapshot.val().frequency);
-    }
-*/
+	   // Set the initial variables for train equal to the stored values.
+	    trainName = snapshot.val().trainName;
+	    destination = snapshot.val().destination;
+	    firstTrainTime = snapshot.val().trainTime;
+	    frequency = snapshot.val().frequency;
+///
+	    // Change the HTML to reflect the initial value
+	    $('#trainName').html(trainName);
+	    $('#destination').html(destination);
+	    $('#firstTrainTime').html(trainTime);
+	    $('#frequency').html(frequency);
+///
+	    // Print the initial data to the console.
+	    console.log(trainName);
+	    console.log(destination);
+	    console.log(firstTrainTime);
+	    console.log(frequency);
     });
   }
   // There are no trains scheduled to be displayed
@@ -143,33 +50,122 @@ trainData.on("value", function(snapshot) {
     console.log("The read failed: " + errorObject.code);
 
 });
+*/
 
-trainData.on("child_added", function(snapshot, prevChildKey) {
-  var newTrain = snapshot.val();
+// 3. Button for adding Trains
+$("#addTrainBtn").on("click", function(){
 
-  TrainScheduler.displaySchedule(newTrain, trainCount++);
+	// Grabs user input
+	var trainName = $("#trainNameInput").val().trim();
+	var destination = $("#destinationInput").val().trim();
+	var trainTime = moment($("#trainTimeInput").val().trim(), "HHmm").format("HH:mm");
+	var frequency = $("#frequencyInput").val().trim();
 
+	// Creates local "temporary" object for holding train data
+	var newTrain = {
+		trainName:  trainName,
+		destination: destination,
+		trainTime: trainTime,
+		frequency: frequency
+	};
+
+	// Uploads train data to the database
+	employeeData.push(newTrain, function(errorObject) {
+
+      if (errorObject) {
+        console.log('Push failed');
+      } else {
+        console.log('Push succeeded');
+      }
+    });;
+
+	// Logs everything to console
+	console.log(newTrain.trainName);
+	console.log(newTrain.destination);
+	console.log(newTrain.trainTime);
+	console.log(newTrain.frequency);
+
+	// Clears all of the text-boxes
+	$("#trainNameInput").val("");
+	$("#destinationInput").val("");
+	$("#trainTimeInput").val("");
+	$("#frequencyInput").val("");
+
+	// Prevents moving to new page
+	return false;
 });
 
-// --------------------------------------------------------------
+// 3. Create Firebase event for adding a train to the database and a row in the html when a user adds an entry
+trainData.on("child_added", function(childSnapshot, prevChildKey){
 
-// Whenever a user clicks the submit button
-$("#addTrain").on("click", function() {
+	console.log("key="+childSnapshot.key()+",val="+childSnapshot.val());
 
-  TrainScheduler.addTrain();
+	// Store everything into a variable.
+	var trainName = childSnapshot.val().trainName;
+	var destination = childSnapshot.val().destination;
+	var trainTime = childSnapshot.val().trainTime;
+	var frequency = childSnapshot.val().frequency;
 
+	// Train Info
+	console.log(trainName);
+	console.log(destination);
+	console.log(trainTime);
+	console.log(frequency);
 
-  // Return False to allow "enter"
-  return false;
+	// Format the train start
+//	var trainTimeFormat = moment.unix(trainTime).format("HH:mm");
+	// Calculate next arrival and minutes away using hardcore math
+	// To calculate the next arrival
+	// ( Current Time - Start Time ) / Frequency == Number of Train Arrivals that
+	// have passed.
+	// (Frequency - remaining minutes ) == the amount of minutes until the next
+	// arrival
+//	var nextArrival = moment().subtract(moment.unix(trainTime, 'HH:mm'), "minutes");
+	// Ignore correct usage of moment.js for now
+
+	var currentTime = moment.unix();
+	var startTime = moment.unix(trainTime);
+	var remainingMinutes = (currentTime - startTime) % frequency;
+	var nextArrival = currentTime + remainingMinutes;
+	console.log(nextArrival);
+
+	// Calculate the minutes away
+	var minutesAway = moment().subtract(moment.unix(nextArrival, 'HH:mm'), "minutes");
+	console.log(nextArrival);
+
+	// Add each train's data into the table
+	$("#trainSchedule > tbody").append("<tr><td>" + trainName + 
+										"</td><td>" + destination + 
+										"</td><td>" + frequency + 
+										"</td><td>" + nextArrival + 
+										"</td><td>" + minutesAway + 
+										"</td></tr>");
+/*
+	var tableRow = $("<tr>");
+	var tableData1 = $("<td>");
+	tableData1.html(trainName);
+	var tableData2 = $("<td>");
+	tableData2.html(destination);
+	var tableData3 = $("<td>");
+	tableData3.html(trainTime);
+	var tableData4 = $("<td>");
+	tableData4.html(frequency);
+	tableRow.append(tableData1);
+	tableRow.append(tableData2);
+	tableRow.append(tableData3);
+	tableRow.append(tableData4);
+	$("#trainSchedule > tbody").append(tableRow);
+*/
 });
 
-var onComplete = function(error) {
-  if (error) {
-    console.log('Synchronization failed');
-  } else {
-    console.log('Synchronization succeeded');
-  }
-};
+
+// Example Time Math
+// -----------------------------------------------------------------------------
+// Assume Employee start date of January 1, 2015
+// Assume current date is March 1, 2016
+
+// We know that this is 15 months.
+// Now we will create code in moment.js to confirm that any attempt we use mets this test case
 
 
 

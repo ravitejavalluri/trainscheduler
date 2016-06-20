@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>All Aboard!!</title>
+
+	<!-- Local Stylesheets -->
+    <link rel="stylesheet" type="text/css" href="assets/css/reset.css">
+
+	<!-- Bootstrap CDN-->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+	<script src="https://code.jquery.com/jquery-2.2.1.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" type="text/css" href="assets/css/style.css">
+
+	<!-- Firebase Reference -->
+	<script src="https://cdn.firebase.com/js/client/2.4.1/firebase.js"></script>
+</head>
+<body>
+
+<div class="container">
+	<br>
+
+	<!-- Jumbotron Title -->
+	<div class="jumbotron">
+		<h2 class="text-center">All Aboard!!</h2>
+		<h3 class="text-center">Take the Trip of Your Lifetime!</h3>
+	</div>
+
+	<!-- Train Schedule -->
+	<div class="row">
+		<div class="col-lg-12">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h5 class="panel-title">Current Train Schedule</h5>
+				</div>
+				<div class="panel-body">
+					<div class="row">
+						<div class="col-sm-3" id="trainNameCol">
+							<h5><strong>Train Name</strong> <span></span></h5>
+							<h6 id="trainName-1">Santa Express</h6>
+							<h6 id="trainName-2">The Crazy Train</h6>
+						</div>
+						<div class="col-sm-3" id="destinationCol">
+							<h5><strong>Destination</strong> <span></span></h5>
+							<h6 id="destination-1">North Pole</h6>
+							<h6 id="destination-2">Oz</h6>
+						</div>
+						<div class="col-sm-2" id="frequencyCol">
+							<h5><strong>Frequency (min)</strong> <span></span></h5>
+							<h6 id="frequency-1">01:00</h6>
+							<h6 id="frequency-2">02:00</h6>
+						</div>
+						<div class="col-sm-2" id="nextArrivalCol">
+							<h5><strong>Next Arrival</strong> <span></span></h5>
+							<h6 id="nextArrival-1">14:00</h6>
+							<h6 id="nextArrival-2">15:00</h6>
+						</div>
+						<div class="col-sm-2" id="minutesAwayCol">
+							<h5><strong>Minutes Away</strong> <span></span></h5>
+							<h6 id="minutesAway-1">20</h6>
+							<h6 id="minutesAway-2">30</h6>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Add Train -->
+	<div class="row">
+		<div class="col-lg-12">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h3 class="panel-title">Add Train</h3>
+				</div>
+				<div class="panel-body">
+					<form>
+						<div class="form-group">
+							<label for="trainName">Train Name</label>
+							<input type="text" class="form-control" id="trainName">
+						</div>
+						<div class="form-group">
+							<label for="desination">Destination</label>
+							<input type="text" class="form-control" id="destination">
+						</div>	
+						<div class="form-group">
+							<label for="trainTime">First Train Time (HH:mm - military time)</label>
+							<!-- use type="time" for now -->
+							<input type="time" class="form-control" id="trainTime">
+						</div>	
+						<div class="form-group">
+							<label for="frequency">Frequency</label>
+							<input type="time" class="form-control" id="frequency">
+						</div>	
+						<button id="addTrain" type="submit" class="btn btn-primary">Submit</button>
+					</form>
+				</div>
+			</div>
+		</div>	
+	</div>
+</div>
+
+</div>
+	
+	<!-- Javascript -->
+	<script src="assets/javascript/app.js"></script>
+
+</body>
+</html>2
