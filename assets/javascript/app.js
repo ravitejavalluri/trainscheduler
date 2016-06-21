@@ -110,52 +110,40 @@ trainData.on("child_added", function(childSnapshot, prevChildKey){
 	console.log(trainTime);
 	console.log(frequency);
 
-	// Format the train start
-//	var trainTimeFormat = moment.unix(trainTime).format("HH:mm");
-	// Calculate next arrival and minutes away using hardcore math
-	// To calculate the next arrival
-	// ( Current Time - Start Time ) / Frequency == Number of Train Arrivals that
-	// have passed.
-	// (Frequency - remaining minutes ) == the amount of minutes until the next
-	// arrival
-//	var nextArrival = moment().subtract(moment.unix(trainTime, 'HH:mm'), "minutes");
-	// Ignore correct usage of moment.js for now
+	// The time stored in the db is only hour:min.  There is no date so the format "HHmm" must
+	// be passed in so that it knows that it is only the time portion of a date/time string.
+	// moment will use today's date as the default.  If the format is not included then moment
+	// defaults to the current time.
+	var startTime = moment(trainTime, "HHmm");
 
-	var currentTime = Date();
-	var startTime = Date(trainTime);
-	var interval = frequency;
-	var remainingMinutes = (timeInMinutes(currentTime) - timeInMinutes(startTime)) % interval;
-/*?*/	var nextArrival = currentTime + (interval - remainingMinutes);
-	console.log("currentTime=" + moment(currentTime).format("hh:mm A"));
-	console.log("startTime=" + moment(startTime).format("hh:mm A"));
-	console.log("nextArrival=" + moment(nextArrival).format("hh:mm A"));
-	console.log("interval=" + moment(interval).format("hh:mm A"));
+	// Get the total number of minutes since the train started running.
+	// This call gets the difference between the current time and the start time
+	// in minutes.  A number will be returned from moment().diff() NOT a moment and NOT a string
+	var minutesFromStart = (moment().diff(moment(startTime), "minutes"));
+
+	// Get the number of minutes that have elapsed since the last train stopped.
+	var minutesSinceLastTrain = minutesFromStart % frequency;
 
 	// Calculate the minutes away
-	var minutesAway = nextArrival - currentTime;
-	console.log("minutesAway=" + moment(minutesAway).format("hh:mm A"));
+	var minutesAway = frequency - minutesSinceLastTrain;
+
+	// Next Arrival = current time + minutes away. Get the time in minutes to
+	// use regular math.
+	var currentTimeInMinutes = moment().minutes() + moment().hour() * 60;  // today's date now
+	var nextArrival = currentTimeInMinutes + minutesAway;
+
+	// At this point, nextArrival is the total number of minutes making up
+	// the time.  Ex. if the next arrival is 12:15 then, nextArrival = 12 * 60 + 15.
+	// Now we need to get the hour and minutes and concatenate them into a time string
+	var hour = Math.floor(nextArrival / 60);
+	var min = nextArrival % 60;
+	var nextArrivalString = hour + ":" + min;
 
 	// Add each train's data into the table
 	$("#trainSchedule > tbody").append("<tr><td>" + trainName + 
 										"</td><td>" + destination + 
 										"</td><td>" + frequency + 
-										"</td><td>" + moment(nextArrival).format("hh:mm A") + 
-										"</td><td>" + moment(minutesAway).format("mm") + 
+										"</td><td>" + moment(nextArrivalString, "HHmm").format("hh:mm A") + 
+										"</td><td>" + minutesAway + 
 										"</td></tr>");
 });
-
-function timeInMinutes(time) {
-
-  return time.minutes() + time.hours() * 60;
-
-}
-// Example Time Math
-// -----------------------------------------------------------------------------
-// Assume Employee start date of January 1, 2015
-// Assume current date is March 1, 2016
-
-// We know that this is 15 months.
-// Now we will create code in moment.js to confirm that any attempt we use mets this test case
-
-
-
